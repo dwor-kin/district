@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <h3>List districts of the city</h3>
+
+    <form name="filter">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th>Filtration</th>
+                <th>
+                    <input name="districtInput" type="text" placeholder="Provide district name" value="{{ filter.districtName }}">
+                    <input name="areaInput" type="text" placeholder="Provide area value" value="{{ filter.area }}">
+                    <input name="populationInput" type="text" placeholder="Provide population value" value="{{ filter.population }}">
+                    <input name="cityInput" type="text" placeholder="Provide city name" value="{{ filter.cityName }}">
+                </th>
+                <th>
+                    <button type="button" class="btn btn-info btn-xs" onclick="applyFilter('{{ path('district_list', {sortField: 'districtName', sortType: sortType })|escape('js') }}')">Apply filter</button>
+                    <button type="button" class="btn btn-info btn-xs" data-toggle="modal" data-target="#districtModal" onclick="purgeInputs()">
+                        Add new district
+                    </button>
+                </th>
+            </tr>
+            </thead>
+        </table>
+    </form>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th onclick="loadPage('{{ path('district_list', {sortField: 'districtName', sortType: sortType })|escape('js') }}')">
+                District {% if sortField == 'districtName' %} [{{ sortTypePresent }}] {% endif %}
+            </th>
+            <th onclick="loadPage('{{ path('district_list', {sortField: 'area', sortType: sortType })|escape('js') }}')">
+                Area {% if sortField == 'area' %} [{{ sortTypePresent }}] {% endif %}
+            </th>
+            <th onclick="loadPage('{{ path('district_list', {sortField: 'population', sortType: sortType })|escape('js') }}')">
+                Population {% if sortField == 'population' %} [{{ sortTypePresent }}] {% endif %}
+            </th>
+            <th onclick="loadPage('{{ path('district_list', {sortField: 'city', sortType: sortType })|escape('js') }}')">
+                City {% if sortField == 'city' %} [{{ sortTypePresent }}] {% endif %}
+            </th>
+            <th>Options</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for districtElement in list %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td>{{ districtElement.districtName }}</td>
+                <td>{{ districtElement.area }}</td>
+                <td>{{ districtElement.population }}</td>
+                <td>{{ districtElement.city.cityName }}</td>
+                <td>
+                    <button type="button" class="btn btn-info btn-xs" onclick="prepareDistrictForEdit({{ districtElement.id }})">
+                        Update
+                    </button>
+                    <button type="button" class="btn btn-info btn-xs" data-target="#deleteModal" onclick="removeDistrict('{{ path('remove', {id: districtElement.id })|escape('js') }}')">Delete</button>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

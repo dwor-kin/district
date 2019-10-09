@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}
+        <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    {% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body>
+{% block javascripts %}
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <script>
+        function loadPage(url) {
+            document.location.href = url;
+        }
+
+        function applyFilter(url) {
+            var districtName = $("input[name=districtInput]").val();
+            var area = $("input[name=areaInput]").val();
+            var population = $("input[name=populationInput]").val();
+            var cityName = $("input[name=cityInput]").val();
+
+            var urlParam =
+                'filter[]=districtName@' + districtName + '&' +
+                'filter[]=area@' + area + '&' +
+                'filter[]=population@' + population + '&' +
+                'filter[]=cityName@' + cityName;
+
+            loadPage(url + '&' + urlParam);
+        }
+
+        function purgeInputs()
+        {
+            $("input[id=id]").val(1);
+            $("input[id=districtName]").val('');
+            $("select[id=cityId]").val('');
+            $("input[id=population]").val('');
+            $("input[id=area]").val('');
+        }
+
+        function prepareDistrictForEdit(id)
+        {
+            var route = '{{ path('get_single_district')|escape('js') }}';
+            route += '?id=' + id;
+
+            $.ajax({
+                type    : "GET",
+                url     : route,
+                error: function(response) {
+                    console.log('error');
+                },
+                success: function(response) {
+                    var district = response.district;
+
+                    $("input[id=id]").val(district.id);
+                    $("input[id=districtName]").val(district.districtName);
+                    $("select[id=cityId]").val(district.cityId);
+                    $("input[id=population]").val(district.population);
+                    $("input[id=area]").val(district.area);
+
+                    $('#districtModal').modal('toggle');
+                    $('#districtModal').modal('show');
+                }
+            });
+        }
+        function saveDistrict()
+        {
+            var data = {
+                'districtName' : $("input[id=districtName]").val(),
+                'cityId' : $("select[id=cityId]").val(),
+                'population' : $("input[id=population]").val(),
+                'area' : $("input[id=area]").val(),
+                'id' : $("input[id=id]").val()
+            };
+
+            if (data.id != '') {
+                var url = '{{ path('update')|escape('js') }}';
+            } else {
+                var url = '{{ path('create')|escape('js') }}';
+            }
+
+            $.ajax({
+                type    : "POST",
+                url     : url,
+                data    : data,
+                error: function(response) {
+                    alert(response.message);
+                },
+                success: function(response) {
+                    if (response.success == true) {
+                        url = "{{ path('district_list', {sortField: 'districtName', sortType: 'ASC' })|escape('js') }}";
+                        loadPage(url);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+
+        function removeDistrict(url) {
+            $.ajax({
+                type    : "DELETE",
+                url     : url,
+                error: function(response) {
+                    alert(response.message);
+                },
+                success: function(response) {
+                    if (response.success == true) {
+                        url = "{{ path('district_list', {sortField: 'districtName', sortType: 'ASC' })|escape('js') }}";
+                        loadPage(url);
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            });
+        }
+    </script>
+
+{% endblock %}
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs">
+                    <li data-toggle="dropdown">
+                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Manage Db<strong class="caret"></strong></a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="#" onclick="loadPage('{{ path('import')|escape('js') }})'">Import from external sites</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="loadPage('{{ path('purge_imported')|escape('js') }})')">Purge imported</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="loadPage('{{ path('purge_inserted')|escape('js') }})')">Purge inserted</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="jumbotron">
+                    {% block body %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div id="districtModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Set district</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" id="id" value="">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <select class="form-control" id="cityId" aria-describedby="cityHelp">
+                            <option value="1">Gdańsk</option>
+                            <option value="2">Kraków</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">District Name</label>
+                        <input type="text" class="form-control" id="districtName" aria-describedby="DistrictNameHelp" placeholder="Enter district name">
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Area</label>
+                        <input type="text" class="form-control" id="area" aria-describedby="areaHelp" placeholder="Enter area">
+                    </div>
+                    <div class="form-group">
+                        <label for="population">Population</label>
+                        <input type="text" class="form-control" id="population" aria-describedby="PopulationHelp" placeholder="Enter population">
+                    </div>
+                    <button type="button" class="btn btn-default" onclick="saveDistrict()">Save</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
