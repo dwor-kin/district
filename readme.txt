@@ -1,7 +1,7 @@
 Requirements:
 PHP 7.3
 MySql
-Symfony (setup instraller)
+Symfony 4.3 (setup instraller)
 Git
 
 Instralation process:
@@ -39,7 +39,7 @@ Application functionality:
    php bin/console app:migrate-district Gdansk
    
    or
-   php bin/console app:migrate-district Kraków
+   php bin/console app:migrate-district Krakï¿½w
 
 2) Application functionality
    - show data (available from localhost:8000/district or localhost:8000/district/list site
