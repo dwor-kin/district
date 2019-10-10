@@ -15,13 +15,22 @@ class DistrictDbMigration
     /** @var DistrictRepository */
     private $districtRepository;
 
+    /**
+     * @param CityRepository $cityRepository
+     * @param DistrictRepository $districtRepository
+     */
     public function __construct(CityRepository $cityRepository, DistrictRepository $districtRepository)
     {
         $this->cityRepository = $cityRepository;
         $this->districtRepository = $districtRepository;
     }
 
-    public function migrateFromTheCity(array $cities)
+    /**
+     * @param array $cities
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function migrateFromTheCity(array $cities): void
     {
         foreach ($cities as $cityName) {
             $city = $this->cityRepository->findOneBy(['cityName' => $cityName]);

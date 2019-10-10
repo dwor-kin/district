@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>{% block title %}Welcome!{% endblock %}</title>
     {% block stylesheets %}
-        <link href="{{ asset('css/styles.css') }}" rel="stylesheet">
         <!-- Latest compiled and minified CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -40,9 +39,9 @@
 
         function purgeInputs()
         {
-            $("input[id=id]").val(1);
+            $("input[id=id]").val();
             $("input[id=districtName]").val('');
-            $("select[id=cityId]").val('');
+            $("select[id=cityId]").val(1);
             $("input[id=population]").val('');
             $("input[id=area]").val('');
         }
@@ -82,6 +81,7 @@
                 'id' : $("input[id=id]").val()
             };
 
+            console.log(data.id);
             if (data.id != '') {
                 var url = '{{ path('update')|escape('js') }}';
             } else {
@@ -136,13 +136,13 @@
                         <a href="#" data-toggle="dropdown" class="dropdown-toggle">Manage Db<strong class="caret"></strong></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="#" onclick="loadPage('{{ path('import')|escape('js') }})'">Import from external sites</a>
+                                <a href="#" onclick="loadPage('{{ path('import')|escape('js') }}')">Import from external sites</a>
                             </li>
                             <li>
-                                <a href="#" onclick="loadPage('{{ path('purge_imported')|escape('js') }})')">Purge imported</a>
+                                <a href="#" onclick="loadPage('{{ path('purge_imported')|escape('js') }}')">Purge imported</a>
                             </li>
                             <li>
-                                <a href="#" onclick="loadPage('{{ path('purge_inserted')|escape('js') }})')">Purge inserted</a>
+                                <a href="#" onclick="loadPage('{{ path('purge_inserted')|escape('js') }}')">Purge inserted</a>
                             </li>
                         </ul>
                     </li>

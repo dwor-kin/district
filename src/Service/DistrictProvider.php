@@ -4,7 +4,7 @@ namespace App\Service;
 use App\Entity\District;
 use App\Repository\DistrictRepository;
 
-class BlaBla
+class DistrictProvider
 {
     /**
      * @var DistrictRepository

@@ -5,6 +5,7 @@ use App\Entity\District;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Doctrine\ORM\Query\Expr;
 
 class DistrictRepository extends ServiceEntityRepository
 {
@@ -82,7 +83,7 @@ class DistrictRepository extends ServiceEntityRepository
     public function findByFilter(string $sortField, string $sortType, array $filters): array
     {
         $qb = $this->createQueryBuilder('d');
-        $qb->join('App\Entity\City', 'c');
+        $qb->join('App\Entity\City', 'c', Expr\Join::WITH, 'd.city = c.id');
         $qb->where('d.id > :startIndex');
         $qb->setParameter(':startIndex', 1);
 

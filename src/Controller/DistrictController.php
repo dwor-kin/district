@@ -6,25 +6,36 @@ use App\Component\Form\DistrictUpdateType;
 use App\Enum\CityEnum;
 use App\Enum\DistrictEnum;
 use App\Helper\FilterMapper;
-use App\Service\BlaBla;
+use App\Service\DistrictProvider;
 use App\Service\DistrictHandler;
 use App\Service\Migration\DistrictDbMigration;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DistrictController extends AbstractController
 {
     /**
+     * Route("/district", name="district_home")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function district()
+    {
+        return $this->redirectToRoute('district_list');
+    }
+
+    /**
      * @Route("/district/list", name="district_list")
      * @param Request $request
-     * @param BlaBla $districtProvider
+     * @param DistrictProvider $districtProvider
      * @param SessionInterface $session
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
-    public function list(Request $request, BlaBla $districtProvider, SessionInterface $session)
+    public function list(Request $request, DistrictProvider $districtProvider, SessionInterface $session)
     {
         $sortType = $request->query->get('sortType', 'ASC');
         $sortField = $request->query->get('sortField', 'districtName');
@@ -56,11 +67,11 @@ class DistrictController extends AbstractController
 
     /**
      * @Route("/district/single", name="get_single_district", methods={"GET"})
-     * @param BlaBla $districtProvider
+     * @param DistrictProvider $districtProvider
      * @param Request $request
      * @return JsonResponse
      */
-    public function getSingleDistrict(Blabla $districtProvider, Request $request)
+    public function getSingleDistrict(DistrictProvider $districtProvider, Request $request)
     {
         try {
             $district = $districtProvider->getSingleDistrictData($request->query->get('id'));
@@ -160,9 +171,9 @@ class DistrictController extends AbstractController
      * @Route("/district/import", name="import", methods={"GET"})
      * @param Request $request
      * @param DistrictDbMigration $districtDbMigration
-     * @return JsonResponse
+     * @return RedirectResponse
      */
-    public function importDefault(Request $request, DistrictDbMigration $districtDbMigration): JsonResponse
+    public function importDefault(Request $request, DistrictDbMigration $districtDbMigration): RedirectResponse
     {
         $importCity = $request->query->get('city');
 
@@ -171,26 +182,18 @@ class DistrictController extends AbstractController
             : [$importCity];
 
         try {
-            foreach ($cities as $cityName) {
-                $districtDbMigration->migrateFromTheCity($cityName);
-            }
-
-            return new JsonResponse(array(
-                'success' => true
-            ), 200);
+            $districtDbMigration->migrateFromTheCity($cities);
+            return $this->redirectToRoute('district_list');
 
         } catch (\Exception $e) {
-            return new JsonResponse(array(
-                'success' => false,
-                'message'  => $e->getMessage()
-            ), 200);
+            return $this->redirectToRoute('district_list');
         }
     }
 
     /**
      * @Route("/district/purge/imported", name="purge_imported", methods={"GET"})
      * @param DistrictHandler $districtHandler
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      */
     public function purgeImported(DistrictHandler $districtHandler)
     {
@@ -206,7 +209,7 @@ class DistrictController extends AbstractController
     /**
      * @Route("/district/purge/inserted", name="purge_inserted", methods={"GET"})
      * @param DistrictHandler $districtHandler
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      */
     public function purgeInserted(DistrictHandler $districtHandler)
     {
