@@ -5,9 +5,9 @@ class FilterMapper
 {
     public static $filterDefinition = [
         'districtName'  => null,
-        'population'    => null,
+        'population'    => ['min' => null, 'max' => null],
         'cityName'      => null,
-        'area'          => null
+        'area'          => ['min' => null, 'max' => null],
     ];
 
     public static function convertFromUrlToArray($filter): array
@@ -15,7 +15,19 @@ class FilterMapper
         $filters = self::$filterDefinition;
         foreach ($filter as $filterUrl) {
             $exploded = explode('@', $filterUrl);
-            $filters[$exploded[0]] = $exploded[1];
+
+            switch ($exploded[0]) {
+                case 'areaMin' :
+                    $filters['area']['min'] = $exploded[1]; break;
+                case 'areaMax' :
+                    $filters['area']['max'] = $exploded[1]; break;
+                case 'populationMin' :
+                    $filters['population']['min'] = $exploded[1]; break;
+                case 'populationMax' :
+                    $filters['population']['max'] = $exploded[1]; break;
+                default:
+                    $filters[$exploded[0]] = $exploded[1];
+            }
         }
 
         return $filters;

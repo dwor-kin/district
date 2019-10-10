@@ -24,14 +24,18 @@
 
         function applyFilter(url) {
             var districtName = $("input[name=districtInput]").val();
-            var area = $("input[name=areaInput]").val();
-            var population = $("input[name=populationInput]").val();
+            var areaMin = $("input[name=areaInputMin]").val();
+            var areaMax = $("input[name=areaInputMax]").val();
+            var populationMin = $("input[name=populationInputMin]").val();
+            var populationMax = $("input[name=populationInputMax]").val();
             var cityName = $("input[name=cityInput]").val();
 
             var urlParam =
                 'filter[]=districtName@' + districtName + '&' +
-                'filter[]=area@' + area + '&' +
-                'filter[]=population@' + population + '&' +
+                'filter[]=areaMin@' + areaMin + '&' +
+                'filter[]=areaMax@' + areaMax + '&' +
+                'filter[]=populationMin@' + populationMin + '&' +
+                'filter[]=populationMax@' + populationMax + '&' +
                 'filter[]=cityName@' + cityName;
 
             loadPage(url + '&' + urlParam);

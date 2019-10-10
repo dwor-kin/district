@@ -88,9 +88,28 @@ class DistrictRepository extends ServiceEntityRepository
         $qb->setParameter(':startIndex', 1);
 
         if (!empty($filters)) {
+
             foreach ($filters as $fieldName => $filterValue) {
                 if (!empty($filterValue)) {
-                    $qb->andWhere($this->findAlias($fieldName) ."." . $fieldName . " LIKE '%" . $filterValue . "%'");
+                    if ($fieldName == 'area' || $fieldName == 'population') {
+                        if (!empty($filterValue['min']) && !empty($filterValue['max'])) {
+                            $qb->andWhere(
+                                $this->findAlias($fieldName) . "." . $fieldName . " BETWEEN " . $filterValue['min'] . " AND " . $filterValue['max']
+                            );
+                        }
+                        elseif (!empty($filterValue['min']) && empty($filterValue['max'])) {
+                            $qb->andWhere(
+                                $this->findAlias($fieldName) . "." . $fieldName . " > " . $filterValue['min']
+                            );
+                        }
+                        elseif (empty($filterValue['min']) && !empty($filterValue['max'])) {
+                            $qb->andWhere(
+                                $this->findAlias($fieldName) . "." . $fieldName . " < " . $filterValue['max']
+                            );
+                        }
+                    } else {
+                        $qb->andWhere($this->findAlias($fieldName) ."." . $fieldName . " LIKE '%" . $filterValue . "%'");
+                    }
                 }
             }
         }

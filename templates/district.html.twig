@@ -11,8 +11,12 @@
                 <th>Filtration</th>
                 <th>
                     <input name="districtInput" type="text" placeholder="Provide district name" value="{{ filter.districtName }}">
-                    <input name="areaInput" type="text" placeholder="Provide area value" value="{{ filter.area }}">
-                    <input name="populationInput" type="text" placeholder="Provide population value" value="{{ filter.population }}">
+                    Area
+                         <input name="areaInputMin" size="8" type="text" placeholder="Min" value="{{ filter.area.min }}">
+                         <input name="areaInputMax" size="8" type="text" placeholder="Max" value="{{ filter.area.max }}">
+                    Population
+                         <input name="populationInputMin" size="8" type="text" placeholder="Min" value="{{ filter.population.min }}">
+                         <input name="populationInputMax" size="8" type="text" placeholder="Max" value="{{ filter.population.max }}">
                     <input name="cityInput" type="text" placeholder="Provide city name" value="{{ filter.cityName }}">
                 </th>
                 <th>
