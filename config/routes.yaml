@@ -1,6 +1,7 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
-app_lucky_number:
+
+district:
   path: /district
   controller: App\Controller\DistrictController::district

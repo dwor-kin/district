@@ -3,9 +3,9 @@ namespace App\Repository;
 
 use App\Entity\District;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\Persistence\ManagerRegistry;
 
 class DistrictRepository extends ServiceEntityRepository
 {
@@ -17,7 +17,7 @@ class DistrictRepository extends ServiceEntityRepository
     /**
      * @param RegistryInterface $registry
      */
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, District::class);
     }

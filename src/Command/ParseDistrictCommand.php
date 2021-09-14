@@ -30,15 +30,20 @@ class ParseDistrictCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return null
+     * @return int
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $cityName = $input->getArgument('cityName');
             $this->districtDbMigration->migrateFromTheCity([$cityName]);
+            
+            return 1;
+            
         } catch (\Exception $e) {
-            die($e->getMessage());
+            echo $e->getMessage();
+            
+            return 0;
         }
     }
 }
